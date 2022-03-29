@@ -43,7 +43,7 @@ export const CharacterDetail: FC = () => {
      * @desc
      * @param page 
      */
-      const fetchLocationsInfo = async (page: number): Promise<Locations> => 
+      const fetchLocationsInfo = async (page?: number): Promise<Locations> => 
         await api.locations({ getOnlyInfo: true });
 
     /**
@@ -64,7 +64,7 @@ export const CharacterDetail: FC = () => {
      * @desc It tries to find last seen locations of 
      * character
      */
-    const getLastSeenLocations = async (): Promise<void> => {
+    const getLastSeenLocations = async (): Promise<[]> => {
         if (!character) return;
         const foundLocations = [];
         const page = 1;
@@ -74,7 +74,7 @@ export const CharacterDetail: FC = () => {
          * @desc
          * @param page 
          */
-        const searchLocations = async (page: number) => {
+        const searchLocations = async (page: number): Promise<any> => {
             const locations = await fetchLocations(page);
 
             locations.results.forEach(location => {
@@ -191,7 +191,6 @@ export const CharacterDetail: FC = () => {
                             </CardContent>
                             <Divider light />
                             <Typography
-                                variant="subtitle3"
                                 color="text.secondary"
                                 component="div"
                                 sx={{
@@ -204,7 +203,7 @@ export const CharacterDetail: FC = () => {
                             </Typography>
                             <Divider light />
                             {lastSeenLocations && lastSeenLocations.length && (
-                                lastSeenLocations.map((location, idx) => (
+                                lastSeenLocations.map((location: any, idx) => (
                                     <Box key={idx}>
                                         <Box sx={{
                                             p: 2,
@@ -242,15 +241,15 @@ export const CharacterDetail: FC = () => {
                                             justifyContent: 'center'
                                         }}
                                     >
-                                        <CircularProgress />
-                                        <Typography
-                                            variant="subtitle2"
-                                            color="text.secondary"
-                                            component="div"
-                                            sx={{ pb: 1, pt: 3 }}
-                                        >
-                                            Searching for Last seen locations
-                                        </Typography>
+                                        <Alert icon={false} severity="info">
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <CircularProgress
+                                                    size="20px" 
+                                                    sx={{ marginRight: 2 }}
+                                                />
+                                                Searching for last seen locations
+                                            </Box>
+                                        </Alert>
                                     </Box>
                                 </Box>
                             )}
@@ -266,7 +265,6 @@ export const CharacterDetail: FC = () => {
                                         }}
                                     >
                                         <Typography
-                                            variant="subtitle3"
                                             color="text.secondary"
                                             component="div"
                                             sx={{ p: 2 }}

@@ -2,7 +2,7 @@ import { fetcher } from '../fetcher';
 import { Locations } from './types';
 
 interface LocationsApi {
-    page: number,
+    page?: number,
     getOnlyInfo?: boolean
 }
 
