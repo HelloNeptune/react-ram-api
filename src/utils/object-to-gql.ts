@@ -1,0 +1,1 @@
+export default (object: Object) => JSON.stringify(object).replace(/"(\w+)"\s*:/g, '$1:');
