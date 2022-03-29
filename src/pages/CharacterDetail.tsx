@@ -242,7 +242,11 @@ export const CharacterDetail: FC = () => {
                                         }}
                                     >
                                         <Alert icon={false} severity="info">
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center'
+                                            }}>
                                                 <CircularProgress
                                                     size="20px" 
                                                     sx={{ marginRight: 2 }}

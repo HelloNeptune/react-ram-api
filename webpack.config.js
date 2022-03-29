@@ -1,44 +1,13 @@
 const path = require('path')
 const webpack = require('webpack')
+const { merge } = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const commonConfig = require('./webpack.config.common')
 
-module.exports = {
-    entry: './src/index.tsx',
+module.exports = merge(commonConfig, {
     mode: 'development',
-    module: {
-        rules: [
-            // JS & TS Rules (included jsx & tsx)
-            {
-                test: /\.(ts|js)x?$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                options: {
-                    presets: [
-                        '@babel/env',
-                        "@babel/preset-react",
-                        "@babel/typescript"
-                    ] 
-                }
-            },
-            // Css Rule
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader']
-            },
-            // Sass Rule
-            {
-                test: /\.s[ac]ss$/i,
-                use: ["style-loader", "css-loader", "sass-loader"]
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
-    },
-    output: {
-        path: path.resolve(__dirname, 'dist/'),
-        publicPath: '/dist/',
-        filename: 'bundle.js'
-    },
+    devtool: 'inline-source-map',
     devServer: {
         static: {
             directory: path.join(__dirname, 'public/'),
@@ -47,8 +16,5 @@ module.exports = {
         port: 3000,
         open: true,
         historyApiFallback: true
-    },
-    plugins: [
-        new webpack.HotModuleReplacementPlugin()
-    ]
-}
+    }
+});
