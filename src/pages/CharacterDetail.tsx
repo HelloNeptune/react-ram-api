@@ -15,6 +15,7 @@ import TrackChangesOutlinedIcon from '@mui/icons-material/TrackChangesOutlined';
 import Alert from '@mui/material/Alert';
 import { Character, Locations } from '../utils/api/types';
 import { api } from '../utils/api';
+import { Header } from '../components/Header';
 
 import './CharacterDetail.scss';
 
@@ -153,19 +154,26 @@ export const CharacterDetail: FC = () => {
                     flexDirection: 'column', 
                     alignItems: 'center' 
                 }}>
+                    <Header showSearch={false} />
+
                     <Card sx={{
                         display: 'flex',
-                        maxWidth: 800, width:
-                        '100%'
+                        flexDirection: ['column', 'row'],
+                        maxWidth: 800,
+                        width: '100%'
                     }}>
                         <CardMedia
                             component="img"
-                            sx={{ width: 400 }}
+                            sx={{
+                                width: ['100%', 400],
+                                height: [300, 'auto']
+                            }}
                             image={character.image}
                         />
                         <Box sx={{
                             display:'flex',
-                            flexDirection: 'column'
+                            flexDirection: 'column',
+                            width: '100%'
                         }}>
                             <CardContent sx={{ width: '100%' }}>
                                 <Typography

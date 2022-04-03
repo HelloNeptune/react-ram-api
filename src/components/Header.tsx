@@ -5,11 +5,13 @@ import { Search } from './Search';
 import './Header.scss';
 
 interface Header {
-    setSearch: (searchText: string | undefined) => void;
+    setSearch?: (searchText: string | undefined) => void;
+    showSearch?: boolean;
 };
 
 export const Header: FC<Header> = ({
-    setSearch
+    setSearch,
+    showSearch = true
 }) => {
     return (
         <>
@@ -21,7 +23,7 @@ export const Header: FC<Header> = ({
                 p: 2
             }}>
                 <Logo />
-                <Search setSearch={setSearch} />
+                {showSearch && <Search setSearch={setSearch} />}
             </Box>
         </>
     );
