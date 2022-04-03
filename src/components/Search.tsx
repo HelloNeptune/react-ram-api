@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import { useSearchParams } from "react-router-dom";
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
@@ -13,6 +14,8 @@ interface Search {
 export const Search: FC<Search> = ({
     setSearch
 }) => {
+    const [searchParams] = useSearchParams();
+
     return (
         <>
             <Paper
@@ -28,6 +31,7 @@ export const Search: FC<Search> = ({
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search for characters"
                     inputProps={{ 'aria-label': 'Search for characters' }}
+                    defaultValue={searchParams.get('q')}
                     onChange={(event: React.BaseSyntheticEvent) => setSearch(
                         event.target?.value
                     )}

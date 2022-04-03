@@ -28,10 +28,10 @@ export const CharacterDetail: FC = () => {
     const [character, setCharacter] = useState<Character>(null);
     const [locationsInfo, setLocationsInfo] = useState<any>(null);
     const [lastSeenLocations, setLastSeenLocations] = useState<[] | null>(null);
+    const [returnBackQuery, setReturnBackQuery] = useState<string | undefined>();
     const [loading, setLoading] = useState<boolean>(false);
 
     const { id } = useParams();
-    const theme = useTheme();
 
     /**
      * @desc
@@ -114,6 +114,9 @@ export const CharacterDetail: FC = () => {
      * @desc initial setup
      */
     useEffect(() => {
+        const storedQuery = localStorage.getItem('search');
+        
+        storedQuery && setReturnBackQuery(storedQuery);
         fetchCharacter(Number(id));
     }, []);
 
@@ -280,7 +283,7 @@ export const CharacterDetail: FC = () => {
                         </Box>
                     </Card>
                     <Link
-                        href="/"
+                        href={`/${returnBackQuery ? '?q=' + returnBackQuery : ''}`}
                         underline="none"
                     >
                         <Button sx={{ margin: '10px 0' }}>
