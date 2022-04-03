@@ -228,41 +228,30 @@ export const CharacterDetail: FC = () => {
                                 ))
                             )}
                             {loading && (
-                                <Box 
+                                <Box
                                     sx={{ 
-                                        pl: 1,
-                                        pb: 1,
                                         display: 'flex',
+                                        flexDirection: 'column',
                                         width: '100%',
                                         height: '100%',
                                         alignItems: 'center',
-                                        justifyContent: 'center'
+                                        justifyContent: 'center',
+                                        p: 2
                                     }}
                                 >
-                                    <Box
-                                        sx={{ 
+                                    <Alert icon={false} severity="info">
+                                        <Box sx={{
                                             display: 'flex',
-                                            flexDirection: 'column',
-                                            width: '100%',
-                                            height: '100%',
                                             alignItems: 'center',
                                             justifyContent: 'center'
-                                        }}
-                                    >
-                                        <Alert icon={false} severity="info">
-                                            <Box sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                            }}>
-                                                <CircularProgress
-                                                    size="20px" 
-                                                    sx={{ marginRight: 2 }}
-                                                />
-                                                Searching for last seen locations
-                                            </Box>
-                                        </Alert>
-                                    </Box>
+                                        }}>
+                                            <CircularProgress
+                                                size="20px" 
+                                                sx={{ marginRight: 2 }}
+                                            />
+                                            Searching for last seen locations
+                                        </Box>
+                                    </Alert>
                                 </Box>
                             )}
                             {lastSeenLocations && !lastSeenLocations.length && (
