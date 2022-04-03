@@ -6,7 +6,7 @@ module.exports = {
     entry: "./src/index.tsx",
     module: {
         rules: [
-            // JS & TS Rules (included jsx & tsx)
+            // JS & TS (included jsx & tsx)
             {
                 test: /\.(ts|js)x?$/,
                 exclude: /node_modules/,
@@ -19,15 +19,24 @@ module.exports = {
                     ]
                 }
             },
-            // Css Rule
+            // Css
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
             },
-            // Sass Rule
+            // Sass
             {
                 test: /\.s[ac]ss$/i,
                 use: ["style-loader", "css-loader", "sass-loader"]
+            },
+            // Images
+            {
+                test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
+                type: 'asset/resource'
+            },
+            {
+                test: /\.html$/,
+                use: 'html-loader'
             }
         ]
     },
@@ -35,8 +44,10 @@ module.exports = {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },
     output: {
-        filename: './main.js',
-        path: path.resolve(__dirname, 'build')
+        path: path.resolve(__dirname, 'build'),
+        filename: '[name].bundle.js',
+        publicPath: '/',
+        assetModuleFilename: "assets/img/[name].[hash:6][ext]"
     },
     plugins: [
         new CleanWebpackPlugin(),

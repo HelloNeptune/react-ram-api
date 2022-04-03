@@ -27,7 +27,7 @@ export const CharacterCard: FC<CharacterCard> = ({
                         alt="green iguana"
                     />
                     <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography variant="subtitle2" component="div">
                         {character.name}
                     </Typography>
                     </CardContent>
