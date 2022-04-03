@@ -16,14 +16,20 @@ export const Search: FC<Search> = ({
     return (
         <>
             <Paper
-                sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+                sx={{
+                    p: '2px 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: ['100%', 400],
+                    mt: [2, 0]
+                }}
             >
                 <InputBase
                     sx={{ ml: 1, flex: 1 }}
                     placeholder="Search for characters"
                     inputProps={{ 'aria-label': 'Search for characters' }}
                     onChange={(event: React.BaseSyntheticEvent) => setSearch(
-                        event.target.value
+                        event.target?.value
                     )}
                 />
                 <Divider
@@ -32,7 +38,6 @@ export const Search: FC<Search> = ({
                 />
                 <IconButton
                     type="submit"
-                    sx={{ p: '10px' }}
                     aria-label="search"
                 >
                     <SearchIcon />

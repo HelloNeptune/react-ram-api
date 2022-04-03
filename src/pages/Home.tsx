@@ -36,7 +36,7 @@ export const Home: FC = () => {
      */
     const fetchCharacters = async (search: string = ''): Promise<Characters> => {
         setLoading(true);
-        console.log('QQQQ', search)
+
         const getCharacters = await api.characters({
             page: page.current,
             filter: { name: search || '' }
@@ -108,7 +108,6 @@ export const Home: FC = () => {
         ];
 
         for (const ev of evts) {
-            console.log(ev)
             window.addEventListener(ev.event, ev.listener);
         }
 

@@ -15,6 +15,7 @@ export const Header: FC<Header> = ({
         <>
             <Box sx={{
                 display: 'flex',
+                flexDirection: ['column', 'row'],
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 p: 2
