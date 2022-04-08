@@ -35,7 +35,7 @@ export const CharacterDetail: FC = () => {
 
     /**
      * @desc
-     * @param id 
+     * @param page 
      */
      const fetchLocations = async (page: number): Promise<Locations> =>
         await api.locations({ page });
@@ -52,9 +52,9 @@ export const CharacterDetail: FC = () => {
      * @param id 
      */
     const fetchCharacter = async (id: number): Promise<void> => {
-        const character = await api.character({ id });
+        const { character, error } = await api.character({ id });
 
-        if (!character) {
+        if (!character || error) {
             window.location.href = "/404";
         }
 

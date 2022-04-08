@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useSearchParams } from "react-router-dom";
+import debounce from 'lodash.debounce';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
@@ -15,6 +16,22 @@ export const Search: FC<Search> = ({
     setSearch
 }) => {
     const [searchParams] = useSearchParams();
+
+    /**
+     * @desc
+     * @param event 
+     */
+    const changeHandler = (event: React.BaseSyntheticEvent) => {
+        setSearch(event.target?.value);
+    };
+
+    /**
+     * @hook memo
+     * @desc Execute changeHandler debounced
+     */
+    const debouncedChangeHandler = useMemo(
+        () => debounce(changeHandler, 300), 
+        []);
 
     return (
         <>
@@ -32,9 +49,7 @@ export const Search: FC<Search> = ({
                     placeholder="Search for characters"
                     inputProps={{ 'aria-label': 'Search for characters' }}
                     defaultValue={searchParams.get('q')}
-                    onChange={(event: React.BaseSyntheticEvent) => setSearch(
-                        event.target?.value
-                    )}
+                    onChange={debouncedChangeHandler}
                 />
                 <Divider
                     sx={{ height: 28, m: 0.5 }}

@@ -1,9 +1,8 @@
-import React, { FC, useEffect, useState, useRef } from 'react'
+import React, { FC, useEffect, useState, useRef, useCallback } from 'react'
 import Grid from '@mui/material/Grid';
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
 import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import { Header } from '../components/Header';
 import { CharacterCard } from '../components/CharacterCard';
@@ -14,56 +13,73 @@ import './Home.scss';
 
 export const Home: FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [loadPoint, setLoadPoint] = useState<number>(0);
     const [characters, setCharacters] = useState<Character[]>([]);
     const [dataInfo, setDataInfo] = useState<any>({});
+    const [errorState, setErrorState] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(true);
+
     const [search, setSearch] = useState<string>(
         searchParams.get("q") || ''
     );
 
     const navigate = useNavigate();
-    const page = useRef(1);
-    const queryOnload = useRef(!!search);
-    
+    const page = useRef<number>(1);
+    const loadPoint = useRef<number>(0);
+    const queryOnload = useRef<boolean>(!!search);
+    const defaultFetched = useRef<boolean>(false);
+
 
     /**
      * @desc
      */
     const fetchCharactersInfo = async (): Promise<any> => {
-        const { info } = await api.characters({
+        const { info, error } = await api.characters({
             getOnlyInfo: true,
             filter: { name: search }
         });
+
+        queryOnload.current = false;
+        if (error) {
+            setErrorState(error);
+            return;
+        }
+        defaultFetched.current = true;
+
         setDataInfo(info);
-    }
+        setErrorState(null);
+    };
 
     /**
      * @desc
      */
-    const fetchCharacters = async (search: string = ''): Promise<Characters> => {
+    const fetchCharacters = async (search: string = ''): Promise<Characters | void> => {
         setLoading(true);
 
-        const getCharacters = await api.characters({
+        const { results, error } = await api.characters({
             page: page.current,
             filter: { name: search || '' }
         });
 
-        // Append to old data
-        setCharacters(characters.concat(getCharacters.results));
         setLoading(false);
 
-        return getCharacters;
+        if (error) {
+            setErrorState(error);
+            return;
+        }
+
+        // Append to old data
+        setCharacters(characters.concat(results));
+        setErrorState(null);
     };
 
     /**
-     * @esc
+     * @desc
      */
     const calculateLoadOffset = (): void => {
         const point = document.documentElement.offsetHeight;
 
         console.log('New fetch point:', point + 'px');
-        setLoadPoint(point);
+        loadPoint.current = point;
     };
 
     /**
@@ -76,8 +92,8 @@ export const Home: FC = () => {
             document.documentElement.scrollTop
 
         if (
-            (currentScrollOffset === loadPoint) ||
-            (loadPoint > maxDocumentHeight && currentScrollOffset === maxDocumentHeight)
+            (currentScrollOffset === loadPoint.current) ||
+            (loadPoint.current > maxDocumentHeight && currentScrollOffset === maxDocumentHeight)
         ) {
             if (page.current >= dataInfo.pages)
                 return;
@@ -86,6 +102,20 @@ export const Home: FC = () => {
             fetchCharacters(search)
         }
     };
+
+    /**
+     * @desc
+     */
+    const searchByTerm = (): void => {
+        navigate({
+            search: search ? `?${createSearchParams({
+                q: search
+            })}` : ''
+        });
+
+        setCharacters([]);
+        fetchCharactersInfo();
+    }
 
 
     /**
@@ -154,24 +184,28 @@ export const Home: FC = () => {
      * @desc search with text
      */
     useEffect(() => {
-        // Remove from storage if search was erased
-        if (!search || search.length < 3) 
+
+    }, [search]);
+
+    /**
+     * @hook
+     * @desc search with text
+     */
+    useEffect(() => {
+        // Reset search
+        if (!search.length && defaultFetched.current) {
             localStorage.removeItem('search');
+            searchByTerm();
+            return;
+        }
 
         if (search.length < 3 || queryOnload.current)
             return;
 
-        navigate({
-            search: `?${createSearchParams({
-                q: search
-            })}`
-        });
-
         // Save to localstorage
         localStorage.setItem('search', search);
 
-        setCharacters([]);
-        fetchCharactersInfo();
+        searchByTerm();
     }, [search]);
 
     return (
@@ -181,20 +215,31 @@ export const Home: FC = () => {
                 <Header setSearch={setSearch} />
 
                 {/* List of characters */}
-                <div className='characters'>
-                    <Grid container spacing={0.5} >
-                        {characters && characters.map((character, idx) => (
-                            <Grid key={idx} item xs={12} sm={6} md={3} xl={2}>
-                                <Link
-                                    href={"character/" + character.id}
-                                    underline="none"
-                                >
-                                    <CharacterCard character={character} />
-                                </Link>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </div>
+                {!errorState && (
+                    <div className='characters'>
+                        <Grid container spacing={0.5} >
+                            {characters && characters.map((character, idx) => (
+                                <Grid key={idx} item xs={12} sm={6} md={3} xl={2}>
+                                    <Link
+                                        href={"character/" + character.id}
+                                        underline="none"
+                                    >
+                                        <CharacterCard character={character} />
+                                    </Link>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </div>
+                )}
+
+                {/* Header */}
+                {errorState && errorState.status === 404 && (
+                    <Alert severity="info">No characters found</Alert>
+                )}
+
+                {errorState && errorState.status !== 404 && (
+                    <Alert severity="error">{errorState.message}</Alert>
+                )};
 
                 {/* Loading */}
                 {loading && <Loading />}

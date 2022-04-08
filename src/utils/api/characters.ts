@@ -1,14 +1,20 @@
 import { fetcher } from '../fetcher';
 import object2Gql from '../object-to-gql';
-import { Characters, FilterCharacter } from './types';
+import { Info, Character, Characters, FilterCharacter, ApiError } from './types';
 
-interface CharactersApi {
+interface CharactersApiFetcher {
     page?: number;
     filter?: FilterCharacter,
     getOnlyInfo?: boolean
 }
 
-export default async function ({ page = 0, filter = {}, getOnlyInfo = false}: CharactersApi): Promise<Characters> {
+interface CharactersApi {
+    error: ApiError
+    info?: Info,
+    results?: [Character]
+}
+
+export default async function ({ page = 0, filter = {}, getOnlyInfo = false}: CharactersApiFetcher): Promise<CharactersApi> {
     const query = `
         query ($page: Int!, $getOnlyInfo: Boolean!) {
             characters(page: $page, filter: ${object2Gql(filter)}) {
@@ -34,7 +40,17 @@ export default async function ({ page = 0, filter = {}, getOnlyInfo = false}: Ch
         }
     `;
 
-    return (await fetcher(query, {
+    const { data: { characters }, error } = await fetcher(query, {
         variables: { page, getOnlyInfo }
-    })).characters;
+    });
+
+    return {
+        ...(!error && getOnlyInfo && { 
+            info: characters.info 
+        }),
+        ...(!error && !getOnlyInfo && {
+            results: characters.results
+        }),
+        error
+    };
 }

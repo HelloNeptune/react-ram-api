@@ -1,11 +1,16 @@
 import { fetcher } from '../fetcher';
-import { Character } from './types';
+import { Character, ApiError } from './types';
 
-interface CharacterApi {
+interface CharacterApiFetcher {
     id: number
 }
 
-export default async function ({ id }: CharacterApi): Promise<Character> {
+interface CharactersApi {
+    error: ApiError
+    character?: Character
+}
+
+export default async function ({ id }: CharacterApiFetcher): Promise<CharactersApi> {
     const query = `
         query ($id: ID!) {
             character(id: $id) {
@@ -29,8 +34,9 @@ export default async function ({ id }: CharacterApi): Promise<Character> {
             }
         }
     `;
-
-    return (await fetcher(query, {
+    const { data: { character }, error } = await fetcher(query, {
         variables: { id }
-    })).character;
+    });
+
+    return { character, error };
 }
