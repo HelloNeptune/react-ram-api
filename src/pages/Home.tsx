@@ -6,6 +6,7 @@ import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import { Header } from '../components/Header';
 import { CharacterCard } from '../components/CharacterCard';
+import { NotFound } from '../components/NotFound';
 import { Loading } from '../components/Loading';
 import { Character, Characters } from '../utils/api/types';
 import { api } from '../utils/api';
@@ -117,6 +118,14 @@ export const Home: FC = () => {
         fetchCharactersInfo();
     }
 
+    /**
+     * @hook callback
+     * @desc
+     */
+    const setSearchCallback = useCallback((search) => {
+        setSearch(search);
+    }, []);
+
 
     /**
      * @hook
@@ -212,7 +221,7 @@ export const Home: FC = () => {
         <>
             <Container maxWidth="xl">
                 {/* Header */}
-                <Header setSearch={setSearch} />
+                <Header setSearch={setSearchCallback} />
 
                 {/* List of characters */}
                 {!errorState && (
@@ -234,7 +243,7 @@ export const Home: FC = () => {
 
                 {/* Header */}
                 {errorState && errorState.status === 404 && (
-                    <Alert severity="info">No characters found</Alert>
+                    <NotFound size="medium" text="Character Not Found" />
                 )}
 
                 {errorState && errorState.status !== 404 && (
